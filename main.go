@@ -47,7 +47,9 @@ func (a *AccountAssert) Init(stub shim.ChaincodeStubInterface) (res pb.Response)
 		panic("genesis account put state err")
 	}
 
-	return shim.Success([]byte("Genesis Account Init Success."))
+	res.Payload = []byte("Genesis Account Init Success.")
+
+	return res
 }
 
 func (a *AccountAssert) Invoke(stub shim.ChaincodeStubInterface) (res pb.Response) {
@@ -73,7 +75,7 @@ func (a *AccountAssert) Invoke(stub shim.ChaincodeStubInterface) (res pb.Respons
 }
 
 func (a *AccountAssert) createAccount(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) < 2 {
+	if len(args) < 3 {
 		return shim.Error("arguments is invalid")
 	}
 
@@ -89,12 +91,19 @@ func (a *AccountAssert) createAccount(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	passwd := args[1]
-	sha256Passwd := sha256.Sum256([]byte(passwd))
+	flag := args[2]
+	var pw string
+	if flag == "hash" {
+		pw = passwd
+	} else {
+		sha256Passwd := sha256.Sum256([]byte(passwd))
+		pw = hex.EncodeToString(sha256Passwd[:])
+	}
 
 	acc := Account{
 		Address: address,
 		Amount:  0,
-		Passwd:  hex.EncodeToString(sha256Passwd[:]),
+		Passwd:  pw,
 	}
 
 	accByte, err = json.Marshal(acc)
