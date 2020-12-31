@@ -104,6 +104,7 @@ func (a *AccountAssert) createAccount(stub shim.ChaincodeStubInterface, args []s
 		Address: address,
 		Amount:  0,
 		Passwd:  pw,
+		Sequence: 0,
 	}
 
 	accByte, err = json.Marshal(acc)

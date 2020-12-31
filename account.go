@@ -9,14 +9,16 @@ import (
 )
 
 type Account struct {
-	Address string `json:"address"`
-	Amount uint64 `json:"tokens"`
-	Passwd string `json:"passwd"`
+	Address  string `json:"address"`
+	Amount   uint64 `json:"tokens"`
+	Passwd   string `json:"passwd"`
+	Sequence uint64 `json:"sequence"`
 }
 
 func (a *Account) Transfer(stub shim.ChaincodeStubInterface, to *Account, amount uint64) error {
 	sendKey := fmt.Sprintf(AccountPrefix, a.Address)
 	a.Amount = safeSub(a.Amount, amount)
+	a.Sequence++
 
 	receiverKey := fmt.Sprintf(AccountPrefix, to.Address)
 	to.Amount = safeAdd(to.Amount, amount)
