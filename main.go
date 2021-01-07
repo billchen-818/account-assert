@@ -61,7 +61,7 @@ func (a *AccountAssert) Invoke(stub shim.ChaincodeStubInterface) (res pb.Respons
 
 	fn, args := stub.GetFunctionAndParameters()
 	switch fn {
-	case "create":
+	case "register":
 		res = a.createAccount(stub, args)
 	case "transfer":
 		res = a.transfer(stub, args)
