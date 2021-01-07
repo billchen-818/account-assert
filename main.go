@@ -67,7 +67,7 @@ func (a *AccountAssert) Invoke(stub shim.ChaincodeStubInterface) (res pb.Respons
 		res = a.transfer(stub, args)
 	case "query":
 		res = a.query(stub, args)
-	case "sequence_add":
+	case "sequenceadd":
 		res = a.sequenceAdd(stub,args)
 	default:
 		res = shim.Error("function name is not valid")
