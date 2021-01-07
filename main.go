@@ -67,6 +67,8 @@ func (a *AccountAssert) Invoke(stub shim.ChaincodeStubInterface) (res pb.Respons
 		res = a.transfer(stub, args)
 	case "query":
 		res = a.query(stub, args)
+	case "sequence_add":
+		res = a.sequenceAdd(stub,args)
 	default:
 		res = shim.Error("function name is not valid")
 	}
@@ -192,6 +194,42 @@ func (a *AccountAssert) query(stub shim.ChaincodeStubInterface, args []string) p
 	}
 	if accByte == nil {
 		return shim.Success([]byte("account is not exist"))
+	}
+
+	return shim.Success(accByte)
+}
+
+func (a *AccountAssert) sequenceAdd(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		return shim.Error("argument is invalid")
+	}
+
+	address := args[0]
+	key := fmt.Sprintf(AccountPrefix, address)
+	accByte, err := stub.GetState(key)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	if accByte == nil {
+		return shim.Success([]byte("account is not exist"))
+	}
+
+	account := &Account{}
+	err = json.Unmarshal(accByte, account)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	account.Sequence++
+
+	accByte, err = json.Marshal(account)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	err = stub.PutState(key, accByte)
+	if err != nil {
+		return shim.Error(err.Error())
 	}
 
 	return shim.Success(accByte)

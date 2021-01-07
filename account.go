@@ -18,7 +18,6 @@ type Account struct {
 func (a *Account) Transfer(stub shim.ChaincodeStubInterface, to *Account, amount uint64) error {
 	sendKey := fmt.Sprintf(AccountPrefix, a.Address)
 	a.Amount = safeSub(a.Amount, amount)
-	a.Sequence++
 
 	receiverKey := fmt.Sprintf(AccountPrefix, to.Address)
 	to.Amount = safeAdd(to.Amount, amount)
